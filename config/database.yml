@@ -1,0 +1,29 @@
+mysql: &mysql
+  adapter: mysql2
+  encoding: utf8
+  username: <%= ENV['MYSQL_USER'] %>
+  password: <%= ENV['MYSQL_PWD'] %>
+  host: 127.0.0.1
+  port: 3306
+
+postgresql: &postgresql
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  username: <%= ENV['POSTGRESS_USER'] %>
+  password: <%= ENV['POSTGRESS_PWD'] %>
+
+default: &default
+  <<: *postgresql
+
+development:
+  <<: *default
+  database: anthill_api_development
+
+test:
+  <<: *default
+  database: anthill_api_test
+
+production:
+  <<: *default
+  database: anthill_api_production
