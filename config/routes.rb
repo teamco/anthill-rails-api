@@ -13,9 +13,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      get 'post/index'
+      resources :websites
       post :auth, to: 'authentication#create'
-      get '/auth' => 'authentication#fetch'
+      get '/auth', to: 'authentication#fetch'
+      get '/user', to: 'users#current_user'
     end
   end
   # get '/pages', to: 'pages#index'
@@ -26,8 +27,8 @@ Rails.application.routes.draw do
   # get '/pages/widgets', to: 'pages#index'
   # get '/pages/widgets/:id', to: 'pages#index'
   #
-  # resources :websites
-  # get '/websites/:id/widgets', to: 'websites#assigned_widgets'
+
+  get '/websites/:id/widgets', to: 'websites#assigned_widgets'
   # post '/websites/:id/widgets', to: 'websites#assign_widgets'
 
   # root to: redirect('/pages')

@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+## JsonWebToken
 class JsonWebToken
   def self.encode(payload)
     expiration = 2.weeks.from_now.to_i
