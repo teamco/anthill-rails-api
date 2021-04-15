@@ -7,8 +7,8 @@ module Api
     ## WebsitesController
     class WebsitesController < ApiController
 
-      before_action :set_website, only: %i[show edit update assigned_widgets assign_widgets destroy]
-      before_action :set_assigned_widgets, only: %i[assigned_widgets]
+      before_action :set_website, only: %i[show edit update destroy_file assigned_widgets assign_widgets destroy]
+      before_action :assigned_widgets, only: %i[assigned_widgets]
 
       # GET /websites
       # GET /websites.json
@@ -19,7 +19,9 @@ module Api
 
       # GET /websites/1
       # GET /websites/1.json
-      def show; end
+      def show
+        render json: { website: @website }
+      end
 
       # GET /websites/new
       def new
@@ -40,62 +42,63 @@ module Api
           render json: { errors: @website.errors, status: :unprocessable_entity }
         end
       end
-    end
 
-    # PATCH/PUT /websites/1
-    # PATCH/PUT /websites/1.json
-    def update
-      if @website.update(website_params)
-        render json: { status: :ok, location: @website }
-      else
-        render json: { errors: @website.errors, status: :unprocessable_entity }
+      # PATCH/PUT /websites/1
+      # PATCH/PUT /websites/1.json
+      def update
+        if @website.update(website_params)
+          render json: { status: :ok, location: @website }
+        else
+          render json: { errors: @website.errors, status: :unprocessable_entity }
+        end
       end
-    end
 
-    # GET
-    def assigned_widgets; end
+      # GET
+      def assigned_widgets; end
 
-    # POST
-    def assign_widgets
-      @widgets = Widget.where({ key: widgets_params[:widget_ids] })
-      @website.widgets = []
-      @website.widgets << @widgets
+      # POST
+      def assign_widgets
+        @widgets = Widget.where({ key: widgets_params[:widget_ids] })
+        @website.widgets = []
+        @website.widgets << @widgets
 
-      if @website.save
-        set_assigned_widgets
-        render json: { status: :created, location: @website }
-      else
-        render json: { errors: @website.errors, status: :unprocessable_entity }
+        if @website.save
+          set_assigned_widgets
+          render json: { status: :created, location: @website }
+        else
+          render json: { errors: @website.errors, status: :unprocessable_entity }
+        end
       end
-    end
 
-    # DELETE /websites/1
-    # DELETE /websites/1.json
-    def destroy
-      @website.destroy
-      render json: { head: :no_content }
-    end
+      # DELETE /websites/1
+      # DELETE /websites/1.json
+      def destroy
+        @website.destroy
+        render json: { head: :no_content }
+      end
 
-    private
+      private
 
-    # Use callbacks to share common setup or constraints between actions.
-    def set_website
-      @website = Website.find_by_key(params[:id])
-    end
+      # Use callbacks to share common setup or constraints between actions.
+      def set_website
+        @website = Website.find_by_key(params[:id])
+        render json: { errors: nil, status: :unprocessable_entity } if @website.nil?
+      end
 
-    def set_assigned_widgets
-      @assigned_widgets = @website.widgets
-    end
+      def set_assigned_widgets
+        @assigned_widgets = @website.widgets
+      end
 
-    # Only allow a list of trusted parameters through.
-    def website_params
-      params.require(:website).permit(:name, :description, :picture,
-                                      :user_id, :version_id, :key,
-                                      :tags, widget_ids: [])
-    end
+      # Only allow a list of trusted parameters through.
+      def website_params
+        params.require(:website).permit(:name, :description, :picture,
+                                        :remove_picture, :user_id, :version_id,
+                                        :key, :tags, widget_ids: [])
+      end
 
-    def widgets_params
-      params.require(:website).permit(:user_id, :key, widget_ids: [])
+      def widgets_params
+        params.require(:website).permit(:user_id, :key, widget_ids: [])
+      end
     end
   end
 end
