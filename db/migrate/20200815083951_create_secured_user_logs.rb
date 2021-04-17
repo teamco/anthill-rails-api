@@ -1,4 +1,4 @@
-class CreateSecuredUserLogs < ActiveRecord::Migration[6.0]
+class CreateSecuredUserLogs < ActiveRecord::Migration[6.1]
   def change
     create_table :secured_user_logs do |t|
       t.integer :user_id, index: true

@@ -1,4 +1,4 @@
-class AddWebsiteWidgets < ActiveRecord::Migration[6.0]
+class AddWebsiteWidgets < ActiveRecord::Migration[6.1]
   def change
     create_table :website_widgets, force: true do |t|
       t.integer :website_id, index: true

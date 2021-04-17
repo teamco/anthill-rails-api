@@ -29,6 +29,8 @@ gem 'mini_magick'
 gem 'net-ssh'
 gem 'rack-cors'
 
+gem 'rb-gravatar'
+
 gem 'cancancan'
 
 gem 'devise'
