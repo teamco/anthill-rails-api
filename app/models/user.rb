@@ -21,7 +21,7 @@ class User < ApplicationRecord
 
     condition = instance_value == entity_value
     if superadmin_role?
-      User.send(method, instance_value) if condition
+      User.send(method, entity_value)
     elsif condition
       User.send(method, instance_value)
     end

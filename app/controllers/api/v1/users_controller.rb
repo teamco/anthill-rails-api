@@ -19,6 +19,8 @@ module Api
       def fetch_user
         if @user
           user = @user.self_or_user(:key, params[:key], 'find_by_key')
+
+          logger.info ">>>>>>>>> #{user.inspect}"
           handle_error(user, 'user', 'prepare_json')
         else
           render_error(@user)

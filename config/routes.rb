@@ -19,7 +19,7 @@ Rails.application.routes.draw do
       get '/auth', to: 'authentication#fetch'
 
       get '/current_user', to: 'users#fetch'
-      get '/users', to: 'users#all_users'
+      get '/all_users', to: 'users#all_users'
       get '/user/:key', to: 'users#fetch_user'
       put '/user/:key', to: 'users#update'
     end
