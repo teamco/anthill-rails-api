@@ -22,6 +22,9 @@ Rails.application.routes.draw do
       get '/all_users', to: 'users#all_users'
       get '/user/:key', to: 'users#fetch_user'
       put '/user/:key', to: 'users#update'
+
+      post '/logout', to: 'users#logout'
+      post '/force_logout', to: 'users#force_logout'
     end
   end
   # get '/pages', to: 'pages#index'

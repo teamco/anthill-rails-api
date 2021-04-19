@@ -9,6 +9,7 @@ module Api
       before_action :current_user
 
       def fetch
+        @user = nil if @user.force_sign_out? && @user.signed_in?
         handle_error(@user, 'user', 'prepare_json')
       end
 
@@ -19,8 +20,6 @@ module Api
       def fetch_user
         if @user
           user = @user.self_or_user(:key, params[:key], 'find_by_key')
-
-          logger.info ">>>>>>>>> #{user.inspect}"
           handle_error(user, 'user', 'prepare_json')
         else
           render_error(@user)
@@ -32,8 +31,8 @@ module Api
       def update
         if @user
           user = @user.self_or_user(:key, params[:key], 'find_by_key')
-          if user && @user.update(user_params)
-            render json: { status: :ok, location: @user }
+          if user&.update(user_params)
+            handle_error(user, 'user', 'prepare_json')
           else
             render_error(user)
           end
@@ -42,13 +41,36 @@ module Api
         end
       end
 
+      def logout(extra = { force_sign_out: false })
+        if @user
+          user = @user.self_or_user(:key, params[:key], 'find_by_key')
+          if (extra[:force_sign_out] && @user.superadmin_role?) || @user.id == user.id
+            handle_sign_out(user, extra)
+          else
+            render_error(user)
+          end
+        else
+          render_error(@user)
+        end
+      end
+
+      def force_logout
+        logout({ force_sign_out: true })
+      end
+
       private
 
+      def handle_sign_out(user, extra = {})
+        sign_out(user)
+        user.update({ signed_in: false }.merge(extra))
+        handle_error(user, 'user', 'prepare_json')
+      end
+
       def handle_error(instance, key, method)
-        if instance
-          render json: Hash[key, instance.send(method)]
-        else
+        if instance.nil?
           render_error(instance)
+        else
+          render json: Hash[key, instance.send(method)]
         end
       end
 
@@ -66,7 +88,8 @@ module Api
       # Only allow a list of trusted parameters through.
       def user_params
         params.require(:user).permit(:name, :key, :profile_image,
-                                     :remove_profile_image)
+                                     :remove_profile_image, :force_sign_out,
+                                     :signed_in)
       end
     end
   end

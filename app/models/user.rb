@@ -40,11 +40,20 @@ class User < ApplicationRecord
     {
       id: id,
       provider: provider,
-      metadata: profile.merge({ key: key }, timestamp, roles, monitor)
+      metadata: profile.merge({ key: key }, timestamp, roles, monitor, auth_info)
     }
   end
 
   private
+
+  def auth_info
+    {
+      auth: {
+        signed_in: signed_in,
+        force_sign_out: force_sign_out
+      }
+    }
+  end
 
   def timestamp
     {
