@@ -29,7 +29,7 @@ class User < ApplicationRecord
 
   def all_prepare_json
     if superadmin_role?
-      User.all.map(&:prepare_json)
+      User.all.order(:name).map(&:prepare_json)
     else
       [prepare_json]
     end
