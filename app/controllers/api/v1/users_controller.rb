@@ -18,44 +18,44 @@ module Api
       end
 
       def fetch_user
-        if @user
-          user = @user.self_or_user(:key, params[:key], 'find_by_key')
-          handle_error(user, 'user', 'prepare_json')
-        else
-          render_error(@user)
-        end
+        user = @user.self_or_user(:key, params[:key], 'find_by_key')
+        handle_error(user, 'user', 'prepare_json')
       end
 
       # PATCH/PUT /users/1
       # PATCH/PUT /users/1.json
       def update
-        if @user
-          user = @user.self_or_user(:key, params[:key], 'find_by_key')
-          if user&.update(user_params)
-            handle_error(user, 'user', 'prepare_json')
-          else
-            render_error(user)
-          end
+        user = @user.self_or_user(:key, params[:key], 'find_by_key')
+        if user&.update(user_params)
+          handle_error(user, 'user', 'prepare_json')
         else
-          render_error(@user)
+          render_error(user)
         end
       end
 
       def logout(extra = { force_sign_out: false })
-        if @user
-          user = @user.self_or_user(:key, params[:key], 'find_by_key')
-          if (extra[:force_sign_out] && @user.superadmin_role?) || @user.id == user.id
-            handle_sign_out(user, extra)
-          else
-            render_error(user)
-          end
+        user = @user.self_or_user(:key, params[:key], 'find_by_key')
+        if (extra[:force_sign_out] && @user&.superadmin_role?) || @user&.id == user&.id
+          handle_sign_out(user, extra)
         else
-          render_error(@user)
+          render_error(user)
         end
       end
 
       def force_logout
         logout({ force_sign_out: true })
+      end
+
+      # DELETE /websites/1
+      # DELETE /websites/1.json
+      def destroy
+        user = @user.self_or_user(:key, params[:key], 'find_by_key')
+        if user.nil?
+          render_error(user)
+        else
+          user.destroy
+          render json: { head: :no_content }
+        end
       end
 
       private
@@ -83,6 +83,10 @@ module Api
         token = request.headers.fetch('Authorization', '').split(' ').last
         payload = JsonWebToken.decode(token)
         @user = User.find(payload['sub'])
+        return unless @user.nil?
+
+        render_error(@user)
+        raise StandardError, 'Record not found'
       end
 
       # Only allow a list of trusted parameters through.

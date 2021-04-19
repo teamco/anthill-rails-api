@@ -7,6 +7,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :trackable
 
+  has_many :websites
+
   mount_base64_uploader :profile_image, PictureUploader
 
   def generate_jwt
