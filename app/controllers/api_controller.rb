@@ -20,4 +20,17 @@ class ApiController < ApplicationController
     render_error(@user)
     raise StandardError, 'Record not found'
   end
+
+  def handle_error(instance, key, method)
+    if instance.nil?
+      render_error(instance)
+    else
+      render json: Hash[key, instance.send(method)]
+    end
+  end
+
+  def render_error(instance)
+    errors = instance.nil? ? 'Record not found' : instance.errors
+    render json: { errors: errors, status: :unprocessable_entity }
+  end
 end

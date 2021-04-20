@@ -18,14 +18,15 @@ Rails.application.routes.draw do
 
       get '/current_user', to: 'users#fetch'
       get '/all_users', to: 'users#all_users'
-      get '/users/:key', to: 'users#fetch_user'
-      put '/users/:key', to: 'users#update'
-      delete '/users/:key', to: 'users#destroy'
+      get '/users/:user_key', to: 'users#fetch_user'
+      put '/users/:user_key', to: 'users#update'
+      delete '/users/:user_key', to: 'users#destroy'
 
       post '/logout', to: 'users#logout'
       post '/force_logout', to: 'users#force_logout'
 
       get '/users/:user_key/websites', to: 'websites#index'
+      get '/users/:user_key/websites/:website_key', to: 'websites#show'
     end
   end
   # get '/pages', to: 'pages#index'

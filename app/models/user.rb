@@ -7,7 +7,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :trackable
 
-  has_many :websites
+  has_many :websites, dependent: :destroy
 
   mount_base64_uploader :profile_image, PictureUploader
 

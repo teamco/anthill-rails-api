@@ -87,8 +87,8 @@ module Api
 
       # Use callbacks to share common setup or constraints between actions.
       def set_website
-        @website = Website.find_by_key(params[:id])
-        render json: { errors: nil, status: :unprocessable_entity } if @website.nil?
+        @website = @website_user.websites.where({ key: params[:website_key] }).first
+        render_error(@website) if @website.nil?
       end
 
       def set_assigned_widgets

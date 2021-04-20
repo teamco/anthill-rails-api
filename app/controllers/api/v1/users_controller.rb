@@ -7,9 +7,10 @@ module Api
     ## UsersController
     class UsersController < ApiController
       before_action :current_user
+      before_action :set_user, only: %i[fetch_user update logout destroy]
 
       def fetch
-        @user = nil if @user.force_sign_out? && @user.signed_in?
+        @user = nil if @user&.force_sign_out? && @user&.signed_in?
         handle_error(@user, 'user', 'prepare_json')
       end
 
@@ -18,27 +19,24 @@ module Api
       end
 
       def fetch_user
-        user = @user.self_or_user(:key, params[:key], 'find_by_key')
-        handle_error(user, 'user', 'prepare_json')
+        handle_error(@selected_user, 'user', 'prepare_json')
       end
 
       # PATCH/PUT /users/1
       # PATCH/PUT /users/1.json
       def update
-        user = @user.self_or_user(:key, params[:key], 'find_by_key')
-        if user&.update(user_params)
-          handle_error(user, 'user', 'prepare_json')
+        if @selected_user&.update(user_params)
+          handle_error(@selected_user, 'user', 'prepare_json')
         else
-          render_error(user)
+          render_error(@selected_user)
         end
       end
 
       def logout(extra = { force_sign_out: false })
-        user = @user.self_or_user(:key, params[:key], 'find_by_key')
-        if (extra[:force_sign_out] && @user&.superadmin_role?) || @user&.id == user&.id
-          handle_sign_out(user, extra)
+        if (extra[:force_sign_out] && @user&.superadmin_role?) || @user&.id == @selected_user&.id
+          handle_sign_out(@selected_user, extra)
         else
-          render_error(user)
+          render_error(@selected_user)
         end
       end
 
@@ -49,41 +47,31 @@ module Api
       # DELETE /websites/1
       # DELETE /websites/1.json
       def destroy
-        user = @user.self_or_user(:key, params[:key], 'find_by_key')
-        if user.nil?
-          render_error(user)
+        if @selected_user.nil?
+          render_error(@selected_user)
         else
-          user.destroy
+          @selected_user.destroy
           render json: { head: :no_content }
         end
       end
 
       private
 
+      def set_user
+        @selected_user = @user&.self_or_user(:key, params[:user_key], 'find_by_key')
+      end
+
       def handle_sign_out(user, extra = {})
         sign_out(user)
-        user.update({ signed_in: false }.merge(extra))
+        user&.update({ signed_in: false }.merge(extra))
         handle_error(user, 'user', 'prepare_json')
-      end
-
-      def handle_error(instance, key, method)
-        if instance.nil?
-          render_error(instance)
-        else
-          render json: Hash[key, instance.send(method)]
-        end
-      end
-
-      def render_error(instance)
-        errors = instance.nil? ? 'Record not found' : instance.errors
-        render json: { errors: errors, status: :unprocessable_entity }
       end
 
       # Only allow a list of trusted parameters through.
       def user_params
-        params.require(:user).permit(:name, :key, :profile_image,
-                                     :remove_profile_image, :force_sign_out,
-                                     :signed_in)
+        params.require(:user).permit(:name, :key, :user_key,
+                                     :profile_image, :remove_profile_image,
+                                     :force_sign_out, :signed_in)
       end
     end
   end
