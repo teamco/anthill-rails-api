@@ -7,13 +7,15 @@ module Api
     ## WebsitesController
     class WebsitesController < ApiController
 
+      before_action :current_user
+      before_action :set_user
       before_action :set_website, only: %i[show edit update destroy_file assigned_widgets assign_widgets destroy]
       before_action :assigned_widgets, only: %i[assigned_widgets]
 
       # GET /websites
       # GET /websites.json
       def index
-        @websites = Website.all
+        @websites = @website_user.websites
         render json: { websites: @websites }
       end
 
@@ -79,6 +81,10 @@ module Api
 
       private
 
+      def set_user
+        @website_user = @user.self_or_user(:key, params[:user_key], 'find_by_key')
+      end
+
       # Use callbacks to share common setup or constraints between actions.
       def set_website
         @website = Website.find_by_key(params[:id])
@@ -97,7 +103,7 @@ module Api
       end
 
       def widgets_params
-        params.require(:website).permit(:user_id, :key, widget_ids: [])
+        params.require(:website).permit(:user_key, :key, widget_ids: [])
       end
     end
   end

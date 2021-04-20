@@ -13,19 +13,19 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :websites
-
       post :auth, to: 'authentication#create'
       get '/auth', to: 'authentication#fetch'
 
       get '/current_user', to: 'users#fetch'
       get '/all_users', to: 'users#all_users'
-      get '/user/:key', to: 'users#fetch_user'
-      put '/user/:key', to: 'users#update'
-      delete '/user/:key', to: 'users#destroy'
+      get '/users/:key', to: 'users#fetch_user'
+      put '/users/:key', to: 'users#update'
+      delete '/users/:key', to: 'users#destroy'
 
       post '/logout', to: 'users#logout'
       post '/force_logout', to: 'users#force_logout'
+
+      get '/users/:user_key/websites', to: 'websites#index'
     end
   end
   # get '/pages', to: 'pages#index'

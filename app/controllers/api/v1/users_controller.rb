@@ -79,16 +79,6 @@ module Api
         render json: { errors: errors, status: :unprocessable_entity }
       end
 
-      def current_user
-        token = request.headers.fetch('Authorization', '').split(' ').last
-        payload = JsonWebToken.decode(token)
-        @user = User.find(payload['sub'])
-        return unless @user.nil?
-
-        render_error(@user)
-        raise StandardError, 'Record not found'
-      end
-
       # Only allow a list of trusted parameters through.
       def user_params
         params.require(:user).permit(:name, :key, :profile_image,
