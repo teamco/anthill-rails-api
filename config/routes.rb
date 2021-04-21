@@ -30,19 +30,11 @@ Rails.application.routes.draw do
       post '/users/:user_key/websites', to: 'websites#create'
       put '/users/:user_key/websites/:website_key', to: 'websites#update'
       delete '/users/:user_key/websites/:website_key', to: 'websites#destroy'
+
+      get '/users/:user_key/widgets', to: 'widgets#index'
     end
   end
-  # get '/pages', to: 'pages#index'
-  # get '/pages/websites', to: 'pages#index'
-  # get '/pages/websites/:id', to: 'pages#index'
-  # get '/pages/websites/:id/widgets', to: 'pages#index'
-  # get '/pages/websites/:id/development', to: 'pages#index'
-  # get '/pages/widgets', to: 'pages#index'
-  # get '/pages/widgets/:id', to: 'pages#index'
-  #
 
-  get '/websites/:id/widgets', to: 'websites#assigned_widgets'
+  # get '/websites/:id/widgets', to: 'websites#assigned_widgets'
   # post '/websites/:id/widgets', to: 'websites#assign_widgets'
-
-  # root to: redirect('/pages')
 end
