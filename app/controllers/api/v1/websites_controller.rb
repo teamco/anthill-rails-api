@@ -36,12 +36,12 @@ module Api
       # POST /websites
       # POST /websites.json
       def create
-        @website = Website.new
+        @website = @website_user.websites.new(website_params)
 
         if @website.save
           render json: { status: :created, location: @website }
         else
-          render json: { errors: @website.errors, status: :unprocessable_entity }
+          render_error(@website)
         end
       end
 
@@ -49,9 +49,9 @@ module Api
       # PATCH/PUT /websites/1.json
       def update
         if @website.update(website_params)
-          render json: { status: :ok, location: @website }
+          render json: { status: :updated, location: @website }
         else
-          render json: { errors: @website.errors, status: :unprocessable_entity }
+          render_error(@website)
         end
       end
 
@@ -66,9 +66,9 @@ module Api
 
         if @website.save
           set_assigned_widgets
-          render json: { status: :created, location: @website }
+          render json: { status: :assigned, location: @website }
         else
-          render json: { errors: @website.errors, status: :unprocessable_entity }
+          render_error(@website)
         end
       end
 

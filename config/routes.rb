@@ -27,6 +27,9 @@ Rails.application.routes.draw do
 
       get '/users/:user_key/websites', to: 'websites#index'
       get '/users/:user_key/websites/:website_key', to: 'websites#show'
+      post '/users/:user_key/websites', to: 'websites#create'
+      put '/users/:user_key/websites/:website_key', to: 'websites#update'
+      delete '/users/:user_key/websites/:website_key', to: 'websites#destroy'
     end
   end
   # get '/pages', to: 'pages#index'
