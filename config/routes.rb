@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       delete '/users/:user_key/websites/:website_key', to: 'websites#destroy'
 
       get '/users/:user_key/widgets', to: 'widgets#index'
+      get '/users/:user_key/widgets/:widget_key', to: 'widgets#show'
     end
   end
 
