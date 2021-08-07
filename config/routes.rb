@@ -27,15 +27,18 @@ Rails.application.routes.draw do
 
       get '/users/:user_key/websites', to: 'websites#index'
       get '/users/:user_key/websites/:website_key', to: 'websites#show'
+      get '/users/:user_key/websites/:website_key/widgets', to: 'websites#assigned_widgets'
+
       post '/users/:user_key/websites', to: 'websites#create'
+      post '/users/:user_key/websites/:id/widgets', to: 'websites#assign_widgets'
       put '/users/:user_key/websites/:website_key', to: 'websites#update'
       delete '/users/:user_key/websites/:website_key', to: 'websites#destroy'
 
       get '/users/:user_key/widgets', to: 'widgets#index'
       get '/users/:user_key/widgets/:widget_key', to: 'widgets#show'
+
+      get '/websites/:id/widgets', to: 'websites#assigned_widgets'
     end
   end
 
-  # get '/websites/:id/widgets', to: 'websites#assigned_widgets'
-  # post '/websites/:id/widgets', to: 'websites#assign_widgets'
 end

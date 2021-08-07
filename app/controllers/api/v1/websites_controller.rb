@@ -10,7 +10,7 @@ module Api
       before_action :current_user
       before_action :set_user
       before_action :set_website, only: %i[show edit update destroy_file assigned_widgets assign_widgets destroy]
-      before_action :assigned_widgets, only: %i[assigned_widgets]
+      before_action :set_assigned_widgets, only: %i[assigned_widgets]
 
       # GET /websites
       # GET /websites.json
@@ -56,7 +56,9 @@ module Api
       end
 
       # GET
-      def assigned_widgets; end
+      def assigned_widgets
+        render json: { assigned_widgets: @assigned_widgets }
+      end
 
       # POST
       def assign_widgets
