@@ -57,7 +57,7 @@ module Api
 
       # GET
       def assigned_widgets
-        render json: { assigned_widgets: @assigned_widgets }
+        render json: { assigned_widgets: @assigned_widgets, website: @website }
       end
 
       # POST
