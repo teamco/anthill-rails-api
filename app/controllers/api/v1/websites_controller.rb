@@ -22,7 +22,7 @@ module Api
       # GET /websites/1
       # GET /websites/1.json
       def show
-        render json: { website: @website }
+        render json: { website: @website, user: @website_user }
       end
 
       # GET /websites/new

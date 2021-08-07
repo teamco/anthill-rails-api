@@ -20,7 +20,7 @@ module Api
       # GET /widgets/1
       # GET /widgets/1.json
       def show
-        render json: { widget: @widget }
+        render json: { widget: @widget, user: @widget_user }
       end
 
       # GET /widgets/new
