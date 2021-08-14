@@ -10,7 +10,7 @@ module Api
         user = User.find_by(email: params[:email])
         if user&.valid_password?(params[:password])
           user.update({ signed_in: true, force_sign_out: false })
-          render json: { token: JsonWebToken.encode(sub: user.id) }
+          render json: { token: JsonWebToken.encode(sub: user.id, suk: user.key) }
         else
           render json: {
             errors: 'Invalid authorization credentials',
